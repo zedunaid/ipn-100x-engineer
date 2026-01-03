@@ -5,16 +5,11 @@ import SearchForm from '@/components/SearchForm';
 import RestaurantCard from '@/components/RestaurantCard';
 import { Restaurant } from '@/types/restaurant';
 
-// TODO: Workshop Exercise 5 - Improve UI with better styling
-// Consider adding animations, better loading states, and responsive design improvements
-
 export default function Home() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
-
-  // console.log('Home component rendered'); // Dead code - should be removed
 
   const handleSearch = async (location: string) => {
     setLoading(true);
@@ -23,6 +18,28 @@ export default function Home() {
 
     try {
       const response = await fetch(`/api/restaurants?address=${encodeURIComponent(location)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch restaurants');
+      }
+
+      setRestaurants(data.restaurants);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setRestaurants([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLocationSearch = async (coords: { latitude: number; longitude: number }) => {
+    setLoading(true);
+    setError(null);
+    setHasSearched(true);
+
+    try {
+      const response = await fetch(`/api/restaurants?lat=${coords.latitude}&lng=${coords.longitude}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -54,7 +71,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Search Section */}
         <section className="mb-8">
-          <SearchForm onSearch={handleSearch} isLoading={loading} />
+          <SearchForm onSearch={handleSearch} onLocationSearch={handleLocationSearch} isLoading={loading} />
         </section>
 
         {/* Results Section */}
@@ -83,8 +100,6 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Found {restaurants.length} restaurants near you
               </h2>
-              {/* TODO: Workshop Exercise 1 - Add opening hours display */}
-              {/* Currently the opening hours are available in the data but not displayed */}
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {restaurants.map((restaurant) => (
                   <RestaurantCard key={restaurant.id} restaurant={restaurant} />
@@ -106,8 +121,6 @@ export default function Home() {
           )}
         </section>
 
-        {/* TODO: Workshop Exercise 3 - Integrate real maps API */}
-        {/* Add a map view showing restaurant locations */}
       </div>
 
       {/* Footer */}

@@ -12,15 +12,3 @@ export interface Restaurant {
   phone: string;
   description: string;
 }
-
-export interface SearchParams {
-  latitude?: number;
-  longitude?: number;
-  address?: string;
-}
-
-export interface ApiResponse {
-  restaurants: Restaurant[];
-  message?: string;
-  error?: string;
-}
