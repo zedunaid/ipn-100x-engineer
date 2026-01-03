@@ -33,7 +33,7 @@ export default function SearchForm({ onSearch, isLoading }: SearchFormProps) {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="Enter address, city, or zip code..."
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
             disabled={isLoading}
           />
         </div>
